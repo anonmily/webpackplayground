@@ -1,8 +1,18 @@
 body{
 	font-family: "Helvetica",Arial, sans-serif;
+	
 	h1{
 		color: red;
 		border: 2px solid red;
 		padding: 0.5em;
+		border-radius: 2em;
+		display: flex;
+		span{
+			flex: 1;
+		}
+		button{
+			flex: 1;
+		}
 	}
+	
 }

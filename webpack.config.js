@@ -1,4 +1,6 @@
 var path = require('path');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
 	context: path.resolve('js'),
@@ -6,16 +8,24 @@ module.exports = {
 	entry: ["./utils", "./app"],
 	output: {
 		// where to put the compiled files
-		path: path.resolve('build/js/'),
+		path: path.resolve('build/'),
 
 		// where the webserver should look for the built files
-		publicPath: path.resolve('/assets/js/'),
+		publicPath: path.resolve('/assets/'),
 		filename: "bundle.js"
 	},
 
 	devServer: {
 		// where to find the root of the webserver
 		contentBase: 'public'
+	},
+
+	plugins: [
+		new ExtractTextPlugin("styles.css")
+	],
+
+	postcss: function(){
+		return [autoprefixer({ browsers: ['last 2 versions', '> 2%'] })]
 	},
 
 	module: {
@@ -32,12 +42,18 @@ module.exports = {
 				exclude: /node_modules/,
 
 				// will first do css-loader, THEN style-loader on file
-				loader: "style-loader!css-loader"
+				loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader")
 			},
 			{
 				test: /\.scss$/,
 				exclude: /node_modules/,
-				loader: "style-loader!css-loader!sass-loader"
+				loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader!sass-loader")
+			},
+			{
+				test: /\.(png|jpg)$/,
+				exclude: /node_modules/,
+				// any image underneath that limit will be inlined, but any images greater will be a separate image
+				loader: "url-loader?limit=10000"
 			},
 			{
 				// regexp for files to apply this for
